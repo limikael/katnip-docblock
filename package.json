@@ -1,0 +1,22 @@
+{
+  "name": "katnip-docblock",
+  "scripts": {
+    "start": "katnip start",
+    "test": "jasmine"
+  },
+  "dependencies": {
+    "glob": "^8.0.3",
+    "katnip": "^0.0.51",
+    "sqlite3": "^5.1.2"
+  },
+  "main": "src/katnip-docblock-main.js",
+  "browser": "src/katnip-docblock-browser.jsx",
+  "type": "module",
+  "engines": {
+    "node": ">=16.x"
+  },
+  "plugins": [],
+  "devDependencies": {
+    "jasmine": "^4.5.0"
+  }
+}
