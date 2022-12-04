@@ -1,5 +1,6 @@
 {
   "name": "katnip-docblock",
+  "version": "0.0.1",
   "scripts": {
     "start": "katnip start",
     "test": "jasmine"
