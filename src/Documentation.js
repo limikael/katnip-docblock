@@ -1,6 +1,23 @@
 import {Model, convertToSlug} from "katnip";
 import {readBlocksFromFile} from "./docblock-util.js";
 import glob from "glob";
+import download from "download";
+import os from "os";
+import fs from "fs";
+import path from "path";
+
+function createTmpDir() {
+	return new Promise((resolve, reject)=>{
+		let tmpDir=os.tmpdir();
+		fs.mkdtemp(`${tmpDir}${path.sep}`, (err, folder) => {
+			if (err)
+				reject(err);
+
+			else
+				resolve(folder);
+		});
+	});
+}
 
 export default class Documentation extends Model {
 	static fields={
@@ -12,7 +29,26 @@ export default class Documentation extends Model {
 	};
 
 	async build() {
-		let files=glob.sync(this.url+"/"+this.files);
+		let tmpDir;
+		let u=new URL(this.url);
+
+		switch (u.protocol) {
+			case "file:":
+				tmpDir=u.pathname;
+				break;
+
+			case "http:":
+			case "https:":
+				tmpDir=await createTmpDir();
+				console.log("downloading to: "+tmpDir);
+				await download(this.url,tmpDir,{extract: true});
+				break;
+
+			default:
+				throw new Error("Unsupported protocol: "+u.protocol);
+		}
+
+		let files=glob.sync(tmpDir+"/"+this.files);
 
 		this.blocks=[];
 		for (let file of files)
@@ -23,12 +59,5 @@ export default class Documentation extends Model {
 			if (block.parent)
 				block.parentSlug=convertToSlug(block.parent);
 		}
-
-		/*for (let block of this.blocks) {
-			block.slug=convertToSlug(block.name);
-			block.children=this.blocks.filter((child)=>child.parent==block.name);
-		}
-
-		this.blocks=this.blocks.filter((block)=>!block.parent);*/
 	}
 }
