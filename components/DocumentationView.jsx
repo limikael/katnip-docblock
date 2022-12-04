@@ -24,7 +24,7 @@ export default function DocumentationView({request}) {
 	let doc=useApiFetch("/api/getDocumentation",{
 		slugOrId: request.pathargs[1],
 		parent: request.pathargs[2]
-	});
+	},[request.pathargs]);
 
 	if (doc && doc.parentBlock)
 		setTemplateContext("title",doc.parentBlock.name);
