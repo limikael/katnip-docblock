@@ -7,8 +7,7 @@
   },
   "dependencies": {
     "download": "^8.0.0",
-    "glob": "^8.0.3",
-    "katnip": "^0.0.51"
+    "glob": "^8.0.3"
   },
   "main": "src/katnip-docblock-main.js",
   "browser": "src/katnip-docblock-browser.jsx",
@@ -19,6 +18,7 @@
   "plugins": [],
   "devDependencies": {
     "jasmine": "^4.5.0",
-    "sqlite3": "^5.1.2"
+    "sqlite3": "^5.1.2",
+    "katnip": "^0.0.52"
   }
 }
