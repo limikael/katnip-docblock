@@ -6,6 +6,7 @@
     "test": "jasmine"
   },
   "dependencies": {
+    "bootstrap-icons": "^1.10.2",
     "download": "^8.0.0",
     "glob": "^8.0.3"
   },
@@ -18,7 +19,7 @@
   "plugins": [],
   "devDependencies": {
     "jasmine": "^4.5.0",
-    "sqlite3": "^5.1.2",
-    "katnip": "^0.0.52"
+    "katnip": "^0.0.52",
+    "sqlite3": "^5.1.2"
   }
 }
