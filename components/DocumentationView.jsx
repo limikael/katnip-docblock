@@ -1,21 +1,36 @@
 import {useApiFetch, bsLoader, setTemplateContext} from "katnip"; 
 
 function DocBlock({block, hideTitle}) {
+	let declaration;
+	switch (block.type) {
+		case "function":
+			declaration=
+				block.flags.map(s=>s+" ").join("")+
+				"function "+block.name+"("+
+				block.params.map(p=>p.name).join(", ")+")";
+			break;
+	}
+
 	return <>
 		{!hideTitle &&
 			<h2 class="border-bottom border-black">{block.name}</h2>
 		}
 		<p>{block.summary}</p>
-		<table class="table table-borderless">
-			<tbody>
-				{block.params.map((param)=><>
-					<tr>
-						<th scope="row" class="col-3"><pre class="m-0">{param.name}</pre></th>
-						<td>{param.description}</td>
-					</tr>
-				</>)}
-			</tbody>
-		</table>
+		{declaration &&
+			<pre class="bg-light p-3">{declaration}</pre>
+		}
+		{!!block.params.length &&
+			<table class="table table-borderless">
+				<tbody>
+					{block.params.map((param)=><>
+						<tr>
+							<th scope="row" class="col-3"><pre class="m-0">{param.name}</pre></th>
+							<td>{param.description}</td>
+						</tr>
+					</>)}
+				</tbody>
+			</table>
+		}
 		<p class="mb-5">{block.description}</p>
 	</>
 }

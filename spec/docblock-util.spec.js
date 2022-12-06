@@ -1,4 +1,4 @@
-import {parseBlock} from "../src/docblock-util.js";
+import {parseBlock, tokenCons, stripFlags} from "../src/docblock-util.js";
 
 describe("docblock-util",()=>{
 	it("can parse",()=>{
@@ -24,15 +24,37 @@ describe("docblock-util",()=>{
 			name: "hello",
 			parent: "global",
 			tags: { function: 'global.hello' },
+			flags: [],
 			params: [{
+				flags: [],
 				name: 'i',
 				type: 'Number',
 				description: 'Some description for i'
 			},{
+				flags: [],
 				name: 's',
 				type: 'String',
 				description: 'Some description for s spanning 2 lines.'
 			}]
 		});
+	});
+
+	it("can parse",()=>{
+		let [flags,tail]=stripFlags("    optional  async   hello world",["optional","async"]);
+		expect(flags).toEqual(["optional","async"]);
+		expect(tail).toEqual("hello world");
+
+		let block=parseBlock(`
+			/**
+			 * Refresh this item with current data from the database.
+			 *
+			 * Refresh this item with current data from the database.
+			 *
+			 * @function async static Javascript functions.refresh
+			 * @param optional i:integer hello
+			 */
+		`);
+
+		//console.log(JSON.stringify(block,null,2));
 	})
 })

@@ -1,13 +1,30 @@
 import fs from "fs";
 
-function tokenCons(s) {
+export function tokenCons(s) {
 	s=s.trim();
 	let pos=s.indexOf(" ");
-	if (s<0)
+	if (pos<0)
 		return [s,""];
 
 	return [s.substr(0,pos).trim(),s.substr(pos).trim()];
 	
+}
+
+export function stripFlags(s, flags) {
+	let resFlags=[];
+
+	for (let done=false; !done;) {
+		let [head,tail]=tokenCons(s);
+		if (flags.includes(head)) {
+			resFlags.push(head);
+			s=tail;
+		}
+
+		else
+			done=true;
+	}
+
+	return [resFlags,s];
 }
 
 function tokenHead(s) {
@@ -46,7 +63,8 @@ export function parseBlock(text) {
 	let paramNum=-1;
 	let doingDescription=false;
 
-	let namingTags=["function","class","section"];
+	let namingTags=["function","class","section","component","module"];
+	let flags=["optional","static","async"];
 
 	let lines=text.split(/\n/).map(s=>trimChars(s," \t/*"));
 	for (let line of lines) {
@@ -55,10 +73,13 @@ export function parseBlock(text) {
 			tag=trimChars(tag,"@");
 			switch (tag) {
 				case "param":
+					let f;
+					[f,tail]=stripFlags(tail,flags);
 					let [declaration,description]=tokenCons(tail);
 					let [name,type]=declaration.split(":");
 					paramNum=block.params.length;
 					block.params.push({
+						flags: f,
 						name: name,
 						type: type,
 						description: description
@@ -69,6 +90,8 @@ export function parseBlock(text) {
 					block.tags[tag]=tail;
 					if (namingTags.includes(tag)) {
 						block.type=tag;
+						[block.flags,tail]=stripFlags(tail,flags);
+
 						let parts=tail.split(".");
 						if (parts.length==2) {
 							block.name=parts[1].trim();
