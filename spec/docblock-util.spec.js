@@ -1,7 +1,7 @@
 import {parseBlock, tokenCons, stripFlags} from "../src/docblock-util.js";
 
 describe("docblock-util",()=>{
-	it("can parse",()=>{
+	/*it("can parse",()=>{
 		let block=parseBlock(`
 			/**
 			 * This is a docblock for a function.
@@ -37,9 +37,9 @@ describe("docblock-util",()=>{
 				description: 'Some description for s spanning 2 lines.'
 			}]
 		});
-	});
+	});*/
 
-	it("can parse",()=>{
+	/*it("can parse",()=>{
 		let [flags,tail]=stripFlags("    optional  async   hello world",["optional","async"]);
 		expect(flags).toEqual(["optional","async"]);
 		expect(tail).toEqual("hello world");
@@ -52,9 +52,36 @@ describe("docblock-util",()=>{
 			 *
 			 * @function async static Javascript functions.refresh
 			 * @param optional i:integer hello
-			 */
+			 * /
 		`);
 
 		//console.log(JSON.stringify(block,null,2));
-	})
+	});*/
+
+	it("keeps bullets",()=>{
+		let block=parseBlock(`
+			/**
+			 * Base class for database models.
+			 *
+			 * The way to use this class is from the main file of a plugin or
+			 * project. For example:
+			 *
+			 * * bla bla
+			 * * this is a bullet 
+			 *
+			 * \`\`\`
+             *     this
+             *     is
+             *     a
+             *     code block
+             * \`\`\`
+			 * 
+			 * @class Model
+			 * @param fields:Object A static field that should exist in subclasses.
+			 *                      It should be an object with the field name as key,
+			 *                      and the SQL definition of the field as value.
+			 * /
+		`);
+		console.log(JSON.stringify(block,null,2));
+	});
 })

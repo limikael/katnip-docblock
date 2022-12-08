@@ -1,6 +1,9 @@
 import {useApiFetch, bsLoader, setTemplateContext} from "katnip"; 
+import {marked} from "marked";
 
 function DocBlock({block, hideTitle}) {
+	let htmlBlockDescription=marked.parse(block.description);
+
 	let declaration;
 	switch (block.type) {
 		case "function":
@@ -31,7 +34,8 @@ function DocBlock({block, hideTitle}) {
 				</tbody>
 			</table>
 		}
-		<p class="mb-5">{block.description}</p>
+		<div dangerouslySetInnerHTML={{__html: htmlBlockDescription}}/>
+		<div class="mb-5"/>
 	</>
 }
 

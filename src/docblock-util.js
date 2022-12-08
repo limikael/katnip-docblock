@@ -45,9 +45,9 @@ function trimChars(s, chars=" ") {
 	return s;
 }
 
-function appendParagraph(s, t) {
+function appendParagraph(s, t, sep=" ") {
 	if (s)
-		return s+" "+t;
+		return s+sep+t;
 
 	return t;
 }
@@ -66,8 +66,9 @@ export function parseBlock(text) {
 	let namingTags=["function","class","section","component","module"];
 	let flags=["optional","static","async"];
 
-	let lines=text.split(/\n/).map(s=>trimChars(s," \t/*"));
-	for (let line of lines) {
+	for (let line of text.split(/\n/)) {
+		line=line.match(/^\s*\/*\s*\**\s?(.*?)\s*\**\s*\/*\s*$/)[1];
+
 		if (tokenHead(line).startsWith("@")) {
 			let [tag,tail]=tokenCons(line);
 			tag=trimChars(tag,"@");
@@ -110,20 +111,19 @@ export function parseBlock(text) {
 			}
 		}
 
-		else if (line.trim()) {
-			line=line.trim();
-
-			if (paramNum>=0)
-				block.params[paramNum].description+=" "+line;
-
-			else if (doingDescription)
-				block.description=appendParagraph(block.description,line);
-
-			else
-				block.summary=appendParagraph(block.summary,line);
+		else if (doingDescription && paramNum<0) {
+			block.description=appendParagraph(block.description,line,"\n");
 		}
 
-		else if (block.summary && paramNum<0) {
+		else if (paramNum>=0 && line.length) {
+			block.params[paramNum].description=appendParagraph(block.params[paramNum].description,line.trim()," ");
+		}
+
+		else if (line.length) {
+			block.summary=appendParagraph(block.summary,line.trim()," ");
+		}
+
+		else if (!line.length && block.summary && paramNum<0) {
 			doingDescription=true;
 		}
 	}
