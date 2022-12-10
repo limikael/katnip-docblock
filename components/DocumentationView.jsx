@@ -1,7 +1,7 @@
-import {useApiFetch, bsLoader, setTemplateContext} from "katnip"; 
+import {useApiFetch, bsLoader, setTemplateContext, A} from "katnip"; 
 import {marked} from "marked";
 
-function DocBlock({block, hideTitle}) {
+function DocBlock({block, hideTitle, baseUrl}) {
 	let htmlBlockDescription=marked.parse(block.description);
 
 	let declaration;
@@ -16,7 +16,11 @@ function DocBlock({block, hideTitle}) {
 
 	return <>
 		{!hideTitle &&
-			<h2 class="border-bottom border-black">{block.name}</h2>
+			<h2 class="border-bottom border-black">
+				<A href={baseUrl+"/"+block.slug} class="text-reset text-decoration-none">
+					{block.name}
+				</A>
+			</h2>
 		}
 		<p>{block.summary}</p>
 		{declaration &&
@@ -48,10 +52,12 @@ export default function DocumentationView({request}) {
 	if (doc && doc.parentBlock)
 		setTemplateContext("title",doc.parentBlock.name);
 
+	let baseUrl="/documentation/"+request.pathargs[1];
+
 	return bsLoader(doc,()=><>
 		{doc.parentBlock &&
-			<DocBlock block={doc.parentBlock} hideTitle={true}/>
+			<DocBlock block={doc.parentBlock} hideTitle={true} baseUrl={baseUrl}/>
 		}
-		{doc.childBlocks.map((block)=><DocBlock block={block}/>)}
+		{doc.childBlocks.map((block)=><DocBlock block={block} baseUrl={baseUrl}/>)}
 	</>);
 }
